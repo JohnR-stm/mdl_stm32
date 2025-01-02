@@ -4,7 +4,7 @@
 
 void uart_init_all(void);
 
-void usart_send_string(char *str);
+void uart1_send_string(char *str);
 
 
 #endif /* _MDL_UART_H_ */
