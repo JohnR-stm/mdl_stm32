@@ -112,26 +112,24 @@ void uart_hw_smple_config(UartInit_t * UartInit)
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
-/*
-void usart_interrupts_init (void){
-    
-  LL_USART_EnableIT_RXNE(USART_PORT);   /// Enable interrupts --- P.1240 RM 
+
+void usart_interrupts_init (USART_TypeDef * port, IRQn_Type irq_usart, uint32_t usart_prio, uint32_t usart_subprio)
+{
+  LL_USART_EnableIT_RXNE(port);   /// Enable interrupts --- P.1240 RM 
   //LL_USART_EnableIT_ERROR(USART_PORT);  /// ERR Interrupts Enable (CR3)
-  NVIC_SetPriority(USART_IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),USART_PRIO, USART_SUBPRIO)); 
-  NVIC_EnableIRQ(USART_IRQ);
+  NVIC_SetPriority(irq_usart, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),usart_prio, usart_subprio)); 
+  NVIC_EnableIRQ(irq_usart);
+}
+
+//-----------------------------------------------------------------------------
+
+void usart_interrupts_deinit (USART_TypeDef * port, IRQn_Type irq_usart)
+{
+  LL_USART_DisableIT_RXNE(port);
+  NVIC_DisableIRQ(irq_usart);
 }
 
 
-//-----------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------
-
-void usart_interrupts_deinit (void){
-    
-  LL_USART_DisableIT_RXNE(USART_PORT);
-  NVIC_DisableIRQ(USART_IRQ);
-}
-*/
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
@@ -162,31 +160,13 @@ uint8_t uart_hw_tx_complete (const USART_TypeDef *USARTx)
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
-/*
-void USART2_IRQHandler(void)
-{
-  if(LL_USART_IsActiveFlag_RXNE(USART_PORT) && LL_USART_IsEnabledIT_RXNE(USART_PORT)) /// Receive data register not empty P.1236 RM
-  {
-    uart_interrupt_handler(); 
-  }
-  else
-  {
-    //-- clear error flags --//
-    LL_USART_ClearFlag_ORE(USART_PORT);
-    LL_USART_ClearFlag_IDLE(USART_PORT);
-    LL_USART_ClearFlag_EOB(USART_PORT);
-    //uint8_t tmp;
-    //usart_receive_byte (&tmp);
-  }
-}
-*/
+
 
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------

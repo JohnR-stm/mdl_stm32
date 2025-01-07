@@ -52,6 +52,9 @@ void uart_init_all(void)
     UartInit.parity = CONF_UART1_PARITY;
     UartInit.transfer_direction = CONF_UART1_DIRECTION;
   uart_hw_smple_config(&UartInit);
+  
+  //-- Interrupts Init --//
+  usart_interrupts_init(CONF_UART1_PORT, uart_IRQ_vector, 5, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -66,3 +69,40 @@ void uart1_send_string(char *str)
     }
   }
 }  
+
+//-----------------------------------------------------------------------------
+
+void uart1_send_buf(uint8_t Buf[], uint16_t sz)
+{
+  uint16_t cnt = 0;
+  while (cnt < sz)
+  {
+    uart_hw_send_byte (Buf[cnt], CONF_UART1_PORT);
+    while (!uart_hw_tx_complete (CONF_UART1_PORT));
+    cnt++;
+  }
+}  
+
+//-----------------------------------------------------------------------------
+
+uint8_t uart1_read_byte(void)
+{
+  uint8_t val;
+  uart_hw_receive_byte (&val, CONF_UART1_PORT);
+  return val;
+}
+
+
+//-----------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------
+
+void uart1_IRQ_handler(void) // USART2_IRQHandler(void)
+{
+  if(uart_hw_IsData(CONF_UART1_PORT))
+  {
+    uart1_handler(); // Extern function
+  }
+  else
+    uart_hw_clrORE_IDLE_EOB(CONF_UART1_PORT);
+}
